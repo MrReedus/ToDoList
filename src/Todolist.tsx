@@ -1,6 +1,7 @@
-import React, {useState, ChangeEvent} from 'react';
+import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
 import {FilterValuesType} from './App';
-import Input from "./components/Input";
+
+import Button from "./components/button";
 
 
 type TaskType = {
@@ -16,7 +17,8 @@ type PropsType = {
     deleteAllTask: () => void
     taskText: string
     setTaskText: (title: string) => void
-    callBack: (text: string) => void
+    // callBack: (text: string) => void
+    addTask: (text: string) => void
 }
 
 export function Todolist(props: PropsType) {
@@ -44,52 +46,61 @@ export function Todolist(props: PropsType) {
 
     const onChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
         props.setTaskText(event.target.value)
+        //меняем состояние строки при каждом вводе чего либо в интпут
     }
-    const onClickHandler = (text: string) => {
-        props.callBack(text)
+    const AddTaskHandler = () => {
+        props.addTask(props.taskText)
+        props.setTaskText('')
+        // значение поля ввода передается в функцию которая лежит в App
     }
 
+    const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            AddTaskHandler()
+        }
+    }
+    const mappedTasks = filteredTasks().map(t =>
+    {
+        return(
+            <li key={t.id}>
+                <input type="checkbox" checked={t.isDone}/>
+                <span>{t.title}</span>
+                <Button name={'х'} callBack={() => props.removeTask(t.id)} />
+            </li>
+        )
+    })
 
-    return <div>
-        <h3>{props.title}</h3>
-        <div style={{display: 'flex'}}>
-            <input type="text" onChange={onChangeInput} value={props.taskText}/>
-            <button onClick={() => onClickHandler(props.taskText)}>Add Task</button>
-        </div>
-        <ul>
-            {
-                filteredTasks().map(t => <li key={t.id}>
-                    <input type="checkbox" checked={t.isDone}/>
-                    <span>{t.title}</span>
-                    <button onClick={() => {
-                        props.removeTask(t.id)
-                    }}>x
-                    </button>
-                </li>)
-            }
-        </ul>
-        <button onClick={props.deleteAllTask}>DELETE ALL TASKS</button>
+
+    return (
         <div>
-            <button onClick={() => changeFilter("first-three")}>
-                first three
-            </button>
-            <button onClick={() => {
-                changeFilter("all")
-            }}>
-                All
-            </button>
-            <button onClick={() => {
-                changeFilter("active")
-            }}>
-                Active
-            </button>
-            <button onClick={() => {
-                changeFilter("completed")
-            }}>
-                Completed
-            </button>
+            <h3>{props.title}</h3>
+            <div style={{display: 'flex'}}>
+                <input
+                    type="text"
+                    onChange={onChangeInput}
+                    value={props.taskText}
+                    onKeyDown={onKeyDownHandler}/>
+
+                <Button name={'ADD TASK'} callBack={AddTaskHandler}/>
+            </div>
+
+            <ul>{mappedTasks}</ul>
+
+            <Button name={'DELETE ALL'} callBack={props.deleteAllTask}/>
+
+            <div style={{display: 'flex'}}>
+                <Button name={'All'} callBack={() => {
+                    changeFilter("all")
+                }}/>
+                <Button name={'Active'} callBack={() => {
+                    changeFilter("active")
+                }}/>
+                <Button name={'Completed'} callBack={() => {
+                    changeFilter("completed")
+                }}/>
+            </div>
         </div>
-    </div>
+    )
 }
 
 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import {Todolist} from './Todolist';
-import Input from "./components/Input";
+
 import {v1} from "uuid";
 
 export type FilterValuesType = "all" | "active" | "completed" | "first-three";
@@ -19,7 +19,8 @@ function App() {
 
 
     let [taskText, setTaskText] = React.useState('')
-    console.log(taskText)
+
+
     function deleteAllTask() {
         setTasks([]);
     }
@@ -31,10 +32,9 @@ function App() {
 
 
     const addTask = (text: string) => {
-        setTasks(  [{id: v1(), title: text, isDone: false}, ...tasks ])
-        setTaskText('')
+        setTasks(  [{id: v1(), title: text, isDone: false}, ...tasks ]) // изменяем состояние масссива добавь в него объект, текст которого получаем из инпута
+
     }
-    console.log(tasks)
 
     return (
         <div className="App">
@@ -46,7 +46,8 @@ function App() {
                       deleteAllTask={deleteAllTask}
                       taskText={taskText}
                       setTaskText={setTaskText}
-                      callBack={(text)=> {addTask(text)}}
+                      addTask={addTask}
+                      // callBack={(text)=> {addTask(text)}}
             />
         </div>
     );
