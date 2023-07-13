@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import './App.css';
-import {Todolist} from './Todolist';
+import {Todolist} from './components/Todolist/Todolist'
 
 import {v1} from "uuid";
 
@@ -17,6 +17,19 @@ function App() {
         {id: v1(), title: "GraphQL", isDone: false},
     ]);
 
+    const changeIsDone = (newId: string, newIsDone: boolean) => {
+
+        let currentTask = tasks.find(elem => elem.id === newId)
+        if (currentTask) {
+            currentTask.isDone = newIsDone
+            setTasks([...tasks]) // перерисовываем
+            console.log(currentTask)
+        }
+
+        setTasks(tasks.map(el => el.id === newId ? {...el, isDone: newIsDone} : el)) // перерисовываем
+        // Делаем копию массива при помощи map и меняем isDone на newIsDone у выбранного элемента
+    }
+
 
     let [taskText, setTaskText] = React.useState('')
 
@@ -32,13 +45,11 @@ function App() {
 
 
     const addTask = (text: string) => {
-        setTasks(  [{id: v1(), title: text, isDone: false}, ...tasks ]) // изменяем состояние масссива добавь в него объект, текст которого получаем из инпута
-
+        setTasks([{id: v1(), title: text, isDone: false}, ...tasks]) // изменяем состояние масссива добавь в него объект, текст которого получаем из инпута
     }
 
     return (
         <div className="App">
-
 
             <Todolist title="What to learn"
                       tasks={tasks}
@@ -47,7 +58,8 @@ function App() {
                       taskText={taskText}
                       setTaskText={setTaskText}
                       addTask={addTask}
-                      // callBack={(text)=> {addTask(text)}}
+                      changeIsDone={changeIsDone}
+
             />
         </div>
     );

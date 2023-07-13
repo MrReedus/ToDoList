@@ -1,7 +1,7 @@
 import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
-import {FilterValuesType} from './App';
-
-import Button from "./components/button";
+import {FilterValuesType} from '../../App';
+import Button from "../Button";
+import styles from "./Todolist.module.css";
 
 
 type TaskType = {
@@ -24,7 +24,8 @@ type PropsType = {
 
 export function Todolist(props: PropsType) {
 
-    let [filter, setFilter] = useState<FilterValuesType>("all");
+    const [filter, setFilter] = useState<FilterValuesType>("all");
+    const [error, setError] = useState<null | string>(null)
 
     function changeFilter(value: FilterValuesType) {
         setFilter(value);
@@ -47,13 +48,16 @@ export function Todolist(props: PropsType) {
 
     const onChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
         props.setTaskText(event.target.value)
+        setError(null)
         //меняем состояние строки при каждом вводе чего либо в интпут
     }
     const AddTaskHandler = () => {
         if (props.taskText.trim()) {
             props.addTask(props.taskText.trim())
             props.setTaskText('')
-        } // Если строка не пустая то таска отправляется
+        } else {
+            setError('title is requred!')
+        } // Если строка не пустая то таска отправляется, а если пустая то появляется ошибка.
 
         // значение поля ввода передается в функцию которая лежит в App
     }
@@ -63,22 +67,25 @@ export function Todolist(props: PropsType) {
             AddTaskHandler()
         }
     }
+
     const mappedTasks = filteredTasks().map(t => {
 
         const changeIsDoneHandler = (event: ChangeEvent<HTMLInputElement>) => {
             props.changeIsDone(t.id, event.currentTarget.checked)
         }
 
-
         return (
-            <li key={t.id} style={{
+            <li style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: "space-between",
                 textAlign: 'left'
-            }}>
+            }}
+                className={ t.isDone ? styles.isDone : ""}
+                key={t.id} >
                 <input type="checkbox" checked={t.isDone} onChange={changeIsDoneHandler}/>
                 <span>{t.title}</span>
+
                 <Button className={'btnRemove'} name={'х'} callBack={() => props.removeTask(t.id)}/>
             </li>
         )
@@ -90,6 +97,7 @@ export function Todolist(props: PropsType) {
             <h3>{props.title}</h3>
             <div style={{display: 'flex'}}>
                 <input
+                    className={error ? styles.error : ''}
                     type="text"
                     onChange={onChangeInput}
                     value={props.taskText}
@@ -97,19 +105,22 @@ export function Todolist(props: PropsType) {
 
                 <Button name={'ADD TASK'} callBack={AddTaskHandler}/>
             </div>
+            <div className={styles.errorMessage}>{error}</div>
 
             <ul>{mappedTasks}</ul>
 
             <Button name={'DELETE ALL'} callBack={props.deleteAllTask}/>
 
             <div style={{display: 'flex'}}>
-                <Button name={'All'} callBack={() => {
+                <Button className={filter === 'all' ? styles.activeFilter : ''} name={'All'} callBack={() => {
                     changeFilter("all")
                 }}/>
-                <Button name={'Active'} callBack={() => {
+                <Button className={filter === 'active' ? styles.activeFilter : ''} name={'Active'} callBack={() => {
                     changeFilter("active")
                 }}/>
-                <Button name={'Completed'} callBack={() => {
+                <Button className={filter === 'completed' ? styles.activeFilter : ''}
+                        name={'Completed'}
+                        callBack={() => {
                     changeFilter("completed")
                 }}/>
             </div>

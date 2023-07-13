@@ -3,23 +3,23 @@ import React from 'react';
 
 type ButtonPropsType = {
     name: string
-    callBack:()=> void
-    style?: {}
+    callBack: () => void
+    style?: {},
+    className?: any
+
 }
-
-
 
 
 const Button = (props: ButtonPropsType) => {
 
-    const onclickHandler = ()=> {
+    const onclickHandler = () => {
         props.callBack()
     }
 
 
     return (
         <div>
-            <button onClick={onclickHandler}>{props.name}</button>
+            <button className={props.className} onClick={onclickHandler}>{props.name}</button>
         </div>
     );
 };
