@@ -19,6 +19,7 @@ type PropsType = {
     setTaskText: (title: string) => void
     // callBack: (text: string) => void
     addTask: (text: string) => void
+    changeIsDone: (newId: string, newIsDone: boolean) => void
 }
 
 export function Todolist(props: PropsType) {
@@ -49,8 +50,11 @@ export function Todolist(props: PropsType) {
         //меняем состояние строки при каждом вводе чего либо в интпут
     }
     const AddTaskHandler = () => {
-        props.addTask(props.taskText)
-        props.setTaskText('')
+        if (props.taskText.trim()) {
+            props.addTask(props.taskText.trim())
+            props.setTaskText('')
+        } // Если строка не пустая то таска отправляется
+
         // значение поля ввода передается в функцию которая лежит в App
     }
 
@@ -59,13 +63,23 @@ export function Todolist(props: PropsType) {
             AddTaskHandler()
         }
     }
-    const mappedTasks = filteredTasks().map(t =>
-    {
-        return(
-            <li key={t.id}>
-                <input type="checkbox" checked={t.isDone}/>
+    const mappedTasks = filteredTasks().map(t => {
+
+        const changeIsDoneHandler = (event: ChangeEvent<HTMLInputElement>) => {
+            props.changeIsDone(t.id, event.currentTarget.checked)
+        }
+
+
+        return (
+            <li key={t.id} style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: "space-between",
+                textAlign: 'left'
+            }}>
+                <input type="checkbox" checked={t.isDone} onChange={changeIsDoneHandler}/>
                 <span>{t.title}</span>
-                <Button name={'х'} callBack={() => props.removeTask(t.id)} />
+                <Button className={'btnRemove'} name={'х'} callBack={() => props.removeTask(t.id)}/>
             </li>
         )
     })
