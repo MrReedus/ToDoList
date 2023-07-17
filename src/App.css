@@ -24,31 +24,3 @@
   opacity: 0.5;
 }
 
-
-
-.btnRemove{
-  background-color: #ffffff;
-  width: 18px;
-  height: 18px;
-  outline: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid grey;
-  border-radius: 4px;
-  cursor: pointer;
-  transition:  background 0.2s ease-out, transform 0.2s ease-in ;
-}
-
-
-
-.btnRemove:hover {
-  background-color: #c7c6c6;
-  transform: scale(1.1);
-}
-
-.btnRemove:active {
-  opacity: 0.6;
-  transform: scale(0.89);
-}
-
